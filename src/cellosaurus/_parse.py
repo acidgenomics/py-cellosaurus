@@ -251,6 +251,9 @@ def parse_cellosaurus_txt(path: str | Path) -> pd.DataFrame:
 
 def _get_package_version() -> str:
     """Get package version string."""
-    from cellosaurus._version import __version__
+    from importlib.metadata import PackageNotFoundError, version
 
-    return __version__
+    try:
+        return version("cellosaurus")
+    except PackageNotFoundError:
+        return "unknown"
