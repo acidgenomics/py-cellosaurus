@@ -51,6 +51,7 @@ COLUMN_RENAME_MAP: dict[str, str] = {
 }
 
 SELECT_CELLS_VALID_COLS = [
+    "bto_id",
     "category",
     "is_cancer",
     "is_contaminated",
@@ -64,6 +65,8 @@ SELECT_CELLS_VALID_COLS = [
     "oncotree_tissue",
     "organism",
     "sex_of_cell",
+    "uberon_id",
+    "uberon_name",
 ]
 
 EXPORT_DROP_COLS = [

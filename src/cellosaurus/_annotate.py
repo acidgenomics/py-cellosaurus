@@ -311,6 +311,28 @@ def _extract_comment(
     return comments.get(key_name, [])
 
 
+def add_bto_id(df: pd.DataFrame) -> pd.DataFrame:
+    """Add ``bto_id`` column from cross-references.
+
+    BTO identifiers are already in CURIE format (e.g. ``BTO:0000565``).
+    A cell line may map to multiple BTO terms, so this column is a list.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame with parsed ``cross_references`` column.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with ``bto_id`` column added.
+    """
+    df["bto_id"] = df["cross_references"].apply(
+        lambda x: x.get("BTO", [])
+    )
+    return df
+
+
 def add_atcc_id(df: pd.DataFrame) -> pd.DataFrame:
     """Add ``atcc_id`` column from cross-references.
 
@@ -493,6 +515,52 @@ def add_sampling_site(df: pd.DataFrame) -> pd.DataFrame:
         DataFrame with ``sampling_site`` column added.
     """
     df["sampling_site"] = df["comments"].apply(_extract_comment, key_name="Derived from site")
+    return df
+
+
+def add_uberon(df: pd.DataFrame) -> pd.DataFrame:
+    """Add ``uberon_id`` and ``uberon_name`` columns from sampling site.
+
+    Parses UBERON ontology identifiers from the ``sampling_site`` column.
+    The raw ``sampling_site`` column is preserved unchanged.
+
+    Cell lines may have multiple sampling sites, so these columns are
+    stored as lists.  IDs are normalised to CURIE format (e.g.
+    ``UBERON:0000178``).
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame with ``sampling_site`` column (list of raw strings).
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with ``uberon_id`` and ``uberon_name`` columns added.
+    """
+
+    def _parse(vals: list[str]) -> tuple[list[str], list[str]]:
+        if not vals:
+            return [], []
+        ids: list[str] = []
+        names: list[str] = []
+        for v in vals:
+            parts = v.split("; ")
+            uberon_curie: str | None = None
+            for part in parts:
+                if part.startswith("UBERON=UBERON_"):
+                    uberon_curie = "UBERON:" + part[len("UBERON=UBERON_"):]
+                    break
+            if uberon_curie is None:
+                continue
+            ids.append(uberon_curie)
+            if len(parts) >= 2:
+                names.append(parts[1].strip())
+        return ids, names
+
+    parsed = df["sampling_site"].apply(_parse)
+    df["uberon_id"] = parsed.apply(lambda x: x[0])
+    df["uberon_name"] = parsed.apply(lambda x: x[1])
     return df
 
 
@@ -682,6 +750,7 @@ def annotate(
     df = format_synonyms(df)
     print("Adding annotations...")
     df = add_atcc_id(df)
+    df = add_bto_id(df)
     df = add_depmap_id(df)
     df = add_is_cancer(df)
     df = add_is_contaminated(df)
@@ -693,6 +762,7 @@ def annotate(
         df = add_oncotree(df, ncit2oncotree, oncotree)
     df = add_population(df)
     df = add_sampling_site(df)
+    df = add_uberon(df)
     df = add_sanger_model_id(df)
     df = add_taxonomy(df)
     df = df.reindex(sorted(df.columns), axis=1)
