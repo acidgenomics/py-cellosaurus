@@ -207,6 +207,7 @@ class Cellosaurus:
 
         Only exact matching is supported. Supported column names:
 
+        - ``bto_id``
         - ``category``
         - ``is_cancer``
         - ``is_contaminated``
@@ -220,6 +221,8 @@ class Cellosaurus:
         - ``oncotree_tissue``
         - ``organism``
         - ``sex_of_cell``
+        - ``uberon_id``
+        - ``uberon_name``
 
         Parameters
         ----------
