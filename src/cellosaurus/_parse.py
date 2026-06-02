@@ -141,11 +141,7 @@ def _process_entry(
     entry["DT"] = parsed.get("DT", [])
     cc_vals = entry.get("CC", [])
     if isinstance(cc_vals, list):
-        discontinued = [
-            c
-            for c in cc_vals
-            if isinstance(c, str) and c.startswith("Discontinued:")
-        ]
+        discontinued = [c for c in cc_vals if isinstance(c, str) and c.startswith("Discontinued:")]
         if discontinued:
             disc_refs = set()
             for d in discontinued:
