@@ -49,7 +49,6 @@ from cellosaurus._globals import (
     CELLOSAURUS_TXT_URL,
     COLUMN_RENAME_MAP,
     NESTED_KEYS,
-    OPTIONAL_KEYS,
 )
 
 
@@ -119,13 +118,11 @@ def _process_entry(
             entry[key] = vals[0]
         else:
             entry[key] = None
-    for key in OPTIONAL_KEYS:
-        if key not in entry:
-            vals = parsed.get(key)
-            if vals is not None and len(vals) > 0:
-                entry[key] = vals[0]
-            else:
-                entry[key] = None
+    # Multi-value optional keys (AS: secondary accessions, SY: synonyms).
+    # Store as lists so no values are truncated.
+    for key in ("AS", "SY"):
+        vals = parsed.get(key)
+        entry[key] = list(vals) if vals else []
     for key in NESTED_KEYS:
         vals = parsed.get(key)
         if vals is not None:
@@ -231,7 +228,11 @@ def parse_cellosaurus_txt(path: str | Path) -> pd.DataFrame:
     print(f"Detected Cellosaurus release {version}.")
     id_indices = [i for i, line in enumerate(lines) if line.startswith("ID   ")]
     term_indices = [i for i, line in enumerate(lines) if line == "//"]
-    assert len(id_indices) == len(term_indices)
+    if len(id_indices) != len(term_indices):
+        raise RuntimeError(
+            f"Malformed Cellosaurus file: {len(id_indices)} ID lines but "
+            f"{len(term_indices)} terminator ('//') lines."
+        )
     print(f"Processing {len(id_indices)} entries...")
     entries = []
     for start, end in zip(id_indices, term_indices, strict=True):
@@ -239,9 +240,12 @@ def parse_cellosaurus_txt(path: str | Path) -> pd.DataFrame:
         entries.append(entry)
     df = pd.DataFrame(entries)
     df = df.rename(columns=COLUMN_RENAME_MAP)
-    assert df["accession"].notna().all()
-    assert df["accession"].str.startswith("CVCL_").all()
-    assert df["cell_line_name"].notna().all()
+    if df["accession"].isna().any():
+        raise RuntimeError("Parsed Cellosaurus data contains entries with missing accessions.")
+    if not df["accession"].str.startswith("CVCL_").all():
+        raise RuntimeError("Parsed Cellosaurus data contains accessions not starting with 'CVCL_'.")
+    if df["cell_line_name"].isna().any():
+        raise RuntimeError("Parsed Cellosaurus data contains entries with missing cell line names.")
     df = df.set_index("accession")
     df = df.sort_index()
     df.attrs["data_version"] = version
