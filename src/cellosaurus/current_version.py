@@ -1,10 +1,12 @@
 """Get current Cellosaurus release version."""
 
-from __future__ import annotations
-
+import re
 import urllib.request
 
 from cellosaurus._globals import CELLOSAURUS_RELNOTES_URL
+
+# Matches e.g. "Cellosaurus version 46" or "Cellosaurus version 46.0"
+_VERSION_RE = re.compile(r"Cellosaurus version\s+(\S+)", re.IGNORECASE)
 
 
 def current_cellosaurus_version() -> str:
@@ -25,11 +27,9 @@ def current_cellosaurus_version() -> str:
     """
     with urllib.request.urlopen(CELLOSAURUS_RELNOTES_URL) as response:
         text = response.read().decode("utf-8")
-    lines = text.splitlines()
-    for line in lines:
-        if "This is the release notes for Cellosaurus version" in line:
-            parts = line.strip().split()
-            version = parts[8]
-            return version
+    for line in text.splitlines():
+        m = _VERSION_RE.search(line)
+        if m:
+            return m.group(1)
     msg = "Failed to parse Cellosaurus version from release notes."
     raise RuntimeError(msg)

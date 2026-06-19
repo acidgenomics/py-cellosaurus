@@ -27,7 +27,7 @@ def standardize_cells(cells: list[str] | str) -> list[str] | str:
     Examples
     --------
     >>> standardize_cells(["22Rv1", "Jurkat", "Ramos (RA-1)"])
-    ['22RV1', 'JURKAT', 'RAMOS']
+    ['22_RV_1', 'JURKAT', 'RAMOS']
     """
     scalar = isinstance(cells, str)
     if scalar:

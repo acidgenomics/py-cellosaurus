@@ -4,6 +4,7 @@ import pandas as pd
 
 from cellosaurus._annotate import (
     add_atcc_id,
+    add_bto_id,
     add_depmap_id,
     add_is_cancer,
     add_is_contaminated,
@@ -11,6 +12,7 @@ from cellosaurus._annotate import (
     add_misspellings,
     add_ncit_disease,
     add_taxonomy,
+    add_uberon,
     format_comments,
     format_cross_references,
     format_diseases,
@@ -81,6 +83,27 @@ def test_format_synonyms() -> None:
     df = _make_df(synonyms=["Syn1; Syn2; Syn3"])
     result = format_synonyms(df)
     assert result.loc["CVCL_0001", "synonyms"] == ["Syn1", "Syn2", "Syn3"]
+
+
+def test_add_bto_id() -> None:
+    """Test adding BTO ID column."""
+    df = _make_df(cross_references=[{"BTO": ["BTO:0000565"]}])
+    result = add_bto_id(df)
+    assert result.loc["CVCL_0001", "bto_id"] == ["BTO:0000565"]
+
+
+def test_add_bto_id_multiple() -> None:
+    """Test adding BTO ID column with multiple terms."""
+    df = _make_df(cross_references=[{"BTO": ["BTO:0000565", "BTO:0001234"]}])
+    result = add_bto_id(df)
+    assert result.loc["CVCL_0001", "bto_id"] == ["BTO:0000565", "BTO:0001234"]
+
+
+def test_add_bto_id_missing() -> None:
+    """Test adding BTO ID column when not present."""
+    df = _make_df(cross_references=[{}])
+    result = add_bto_id(df)
+    assert result.loc["CVCL_0001", "bto_id"] == []
 
 
 def test_add_atcc_id() -> None:
@@ -160,3 +183,52 @@ def test_add_taxonomy() -> None:
     result = add_taxonomy(df)
     assert result.loc["CVCL_0001", "ncbi_taxonomy_id"] == [9606]
     assert "species_of_origin" not in result.columns
+
+
+def test_add_uberon() -> None:
+    """Test adding UBERON ID and name columns."""
+    df = _make_df(sampling_site=[["In situ; Peripheral blood; UBERON=UBERON_0000178"]])
+    result = add_uberon(df)
+    assert result.loc["CVCL_0001", "uberon_id"] == ["UBERON:0000178"]
+    assert result.loc["CVCL_0001", "uberon_name"] == ["Peripheral blood"]
+
+
+def test_add_uberon_multiple() -> None:
+    """Test adding UBERON columns with multiple sampling sites."""
+    df = _make_df(
+        sampling_site=[
+            [
+                "In situ; Heart; UBERON=UBERON_0000948",
+                "In situ; Lung; UBERON=UBERON_0002048",
+            ]
+        ]
+    )
+    result = add_uberon(df)
+    assert result.loc["CVCL_0001", "uberon_id"] == ["UBERON:0000948", "UBERON:0002048"]
+    assert result.loc["CVCL_0001", "uberon_name"] == ["Heart", "Lung"]
+
+
+def test_add_uberon_empty() -> None:
+    """Test adding UBERON columns when sampling_site is empty."""
+    df = _make_df(sampling_site=[[]])
+    result = add_uberon(df)
+    assert result.loc["CVCL_0001", "uberon_id"] == []
+    assert result.loc["CVCL_0001", "uberon_name"] == []
+
+
+def test_add_uberon_no_ontology() -> None:
+    """Test adding UBERON columns when no UBERON ID is present."""
+    df = _make_df(sampling_site=[["Metastatic; Not specified"]])
+    result = add_uberon(df)
+    assert result.loc["CVCL_0001", "uberon_id"] == []
+    assert result.loc["CVCL_0001", "uberon_name"] == []
+
+
+def test_add_uberon_with_note() -> None:
+    """Test adding UBERON columns when a Note= field precedes the UBERON ID."""
+    df = _make_df(
+        sampling_site=[["In situ; Lung; Note=From a bronchoalveolar lavage; UBERON=UBERON_0002048"]]
+    )
+    result = add_uberon(df)
+    assert result.loc["CVCL_0001", "uberon_id"] == ["UBERON:0002048"]
+    assert result.loc["CVCL_0001", "uberon_name"] == ["Lung"]

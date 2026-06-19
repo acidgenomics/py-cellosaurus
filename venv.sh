@@ -7,9 +7,11 @@ install_venv() {
         local python_version
         [[ -f '.python-version' ]] || return 1
         IFS= read -r python_version < '.python-version'
-        if [[ -d "${XDG_DATA_HOME:-}/ca-certificates" ]]
+        if ! uv python find "$python_version" > /dev/null 2>&1
         then
-            python_version='3.11'
+            echo "Error: Python ${python_version} is not installed." >&2
+            echo "Install Python ${python_version} and ensure it is on PATH." >&2
+            return 1
         fi
         uv venv .venv \
             --no-python-downloads \
@@ -25,8 +27,13 @@ install_venv() {
         --requirements 'pyproject.toml' \
         --upgrade
     uv lock
-    uv pip compile 'pyproject.toml' \
-        --output-file 'requirements.txt' \
+    uv export \
+        --format requirements-txt \
+        --output-file requirements.txt \
+        --all-extras \
+        --no-hashes \
+        --no-emit-project \
+        --frozen \
         > /dev/null
     uv pip list
     return 0
@@ -41,7 +48,6 @@ main() {
     fi
     cache_dirs=(
         'build'
-        'src/cellosaurus.egg-info'
     )
     rm -fr "${cache_dirs[@]}"
     install_venv
