@@ -240,11 +240,11 @@ def parse_cellosaurus_txt(path: str | Path) -> pd.DataFrame:
         entries.append(entry)
     df = pd.DataFrame(entries)
     df = df.rename(columns=COLUMN_RENAME_MAP)
-    if df["accession"].isna().any():
+    if bool(df["accession"].isna().any()):
         raise RuntimeError("Parsed Cellosaurus data contains entries with missing accessions.")
-    if not df["accession"].str.startswith("CVCL_").all():
+    if not bool(df["accession"].str.startswith("CVCL_").all()):
         raise RuntimeError("Parsed Cellosaurus data contains accessions not starting with 'CVCL_'.")
-    if df["cell_line_name"].isna().any():
+    if bool(df["cell_line_name"].isna().any()):
         raise RuntimeError("Parsed Cellosaurus data contains entries with missing cell line names.")
     df = df.set_index("accession")
     df = df.sort_index()

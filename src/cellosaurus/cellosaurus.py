@@ -135,7 +135,10 @@ class Cellosaurus:
 
     def __getitem__(self, key: str) -> pd.Series:
         """Access a column by name."""
-        return self.df[key]
+        result = self.df[key]
+        if not isinstance(result, pd.Series):
+            raise TypeError(f"Column {key!r} did not return a Series.")
+        return result
 
     def head(self, n: int = 5) -> pd.DataFrame:
         """Return the first *n* rows."""
@@ -249,14 +252,20 @@ class Cellosaurus:
             raise ValueError(msg)
         masks: list[pd.Series] = []
         for col, value in kwargs.items():
-            vals = self.df[col]
+            vals_raw = self.df[col]
+            if not isinstance(vals_raw, pd.Series):
+                raise TypeError(f"Column {col!r} is not a Series.")
+            vals: pd.Series = vals_raw
             arg_list = value if isinstance(value, list) else [value]
-            if vals.apply(lambda v: isinstance(v, list)).any():
-                mask = vals.apply(
+            if bool(vals.apply(lambda v: isinstance(v, list)).any()):
+                mask_raw = vals.apply(
                     lambda v, a=arg_list: (
                         any(item in a for item in v) if isinstance(v, list) else v in a
                     )
                 )
+                if not isinstance(mask_raw, pd.Series):
+                    raise TypeError("apply() did not return a Series.")
+                mask: pd.Series = mask_raw
             else:
                 mask = vals.isin(arg_list)
             masks.append(mask)
@@ -288,7 +297,8 @@ class Cellosaurus:
         pattern = r"^Mutation; HGNC; ([0-9]+); ([^;]+);.+$"
         result: dict[str, list[str]] = {}
         for acc, row in obj.df.iterrows():
-            comments = row.get("comments", {})
+            comments_raw = row.get("comments", {})
+            comments: dict = comments_raw if isinstance(comments_raw, dict) else {}
             seq_vars = comments.get("Sequence variation", [])
             matches = [s for s in seq_vars if re.match(pattern, s)]
             if matches:
@@ -318,7 +328,8 @@ class Cellosaurus:
         )
         result: dict[str, list[str]] = {}
         for acc, row in obj.df.iterrows():
-            comments = row.get("comments", {})
+            comments_raw = row.get("comments", {})
+            comments: dict = comments_raw if isinstance(comments_raw, dict) else {}
             seq_vars = comments.get("Sequence variation", [])
             matches = [s for s in seq_vars if re.match(pattern, s)]
             if matches:
@@ -421,7 +432,8 @@ class Cellosaurus:
         obj = self.exclude_non_human_cells().exclude_non_cancer_cells().exclude_contaminated_cells()
         result: list[str] = []
         for acc, row in obj.df.iterrows():
-            comments = row.get("comments", {})
+            comments_raw = row.get("comments", {})
+            comments: dict = comments_raw if isinstance(comments_raw, dict) else {}
             groups = comments.get("Group", [])
             if "Triple negative breast cancer (TNBC) cell line" in groups:
                 result.append(str(acc))
@@ -564,7 +576,7 @@ class Cellosaurus:
             if col not in df.columns:
                 continue
             series = df[col]
-            if series.apply(type).eq(list).any():
+            if bool(series.apply(type).eq(list).any()):
                 mask = series.apply(lambda v: cell in v if isinstance(v, list) else v == cell)
             else:
                 mask = series == cell
@@ -594,7 +606,7 @@ class Cellosaurus:
         drop = [c for c in EXPORT_DROP_COLS if c in self.df.columns]
         out = self.df.drop(columns=drop).copy()
         for col in out.columns:
-            if out[col].apply(type).eq(list).any():
+            if bool(out[col].apply(type).eq(list).any()):
                 out[col] = out[col].apply(
                     lambda v: "; ".join(str(i) for i in v) if isinstance(v, list) else v
                 )

@@ -6,7 +6,9 @@ requires = ["uv_build>=0.11,<1"]
 name = "cellosaurus"
 version = "0.1.0"
 description = "Cellosaurus identifier mapping toolkit."
-license = "AGPL-3.0-or-later"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 authors = [{ name = "Michael Steinbaugh", email = "mike@steinbaugh.com" }]
 maintainers = [{ name = "Acid Genomics" }]
@@ -40,6 +42,7 @@ develop = [
 [project.urls]
 Homepage = "https://github.com/acidgenomics/py-cellosaurus"
 Repository = "https://github.com/acidgenomics/py-cellosaurus"
+Changelog = "https://github.com/acidgenomics/py-cellosaurus/blob/main/CHANGELOG.md"
 
 [tool.bumpver]
 commit = true
@@ -85,10 +88,14 @@ override_SS05 = ['^Access ', '^Assess ', '^Process ']
 [tool.pyright]
 pythonVersion = "3.12"
 verboseOutput = true
+venvPath = "."
+venv = ".venv"
+exclude = ["tests", ".venv"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short"
+pythonpath = ["src"]
 markers = ["network: marks tests that require network access"]
 
 [tool.ruff]
@@ -176,9 +183,10 @@ max-statements = 100
 
 [tool.ty.environment]
 python-version = "3.12"
+python = ".venv"
 
 [tool.ty.src]
-exclude = [".venv", "**/__pycache__", "**/.*"]
+exclude = [".venv", "**/__pycache__", "**/.*", "tests"]
 
 [tool.ty.terminal]
 error-on-warning = true

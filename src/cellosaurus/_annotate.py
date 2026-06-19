@@ -327,9 +327,7 @@ def add_bto_id(df: pd.DataFrame) -> pd.DataFrame:
     pd.DataFrame
         DataFrame with ``bto_id`` column added.
     """
-    df["bto_id"] = df["cross_references"].apply(
-        lambda x: x.get("BTO", [])
-    )
+    df["bto_id"] = df["cross_references"].apply(lambda x: x.get("BTO", []))
     return df
 
 
@@ -549,7 +547,7 @@ def add_uberon(df: pd.DataFrame) -> pd.DataFrame:
             uberon_curie: str | None = None
             for part in parts:
                 if part.startswith("UBERON=UBERON_"):
-                    uberon_curie = "UBERON:" + part[len("UBERON=UBERON_"):]
+                    uberon_curie = "UBERON:" + part[len("UBERON=UBERON_") :]
                     break
             if uberon_curie is None:
                 continue
@@ -676,7 +674,7 @@ def add_oncotree(
         how="left",
     )
     keep_cols = ["code", "name", "mainType", "tissue", "parent", "level"]
-    ot = oncotree[[c for c in keep_cols if c in oncotree.columns]].copy()
+    ot = oncotree.loc[:, [c for c in keep_cols if c in oncotree.columns]].copy()
     ot = ot.rename(
         columns={
             "code": "oncotree_code",

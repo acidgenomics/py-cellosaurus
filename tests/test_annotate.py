@@ -196,10 +196,12 @@ def test_add_uberon() -> None:
 def test_add_uberon_multiple() -> None:
     """Test adding UBERON columns with multiple sampling sites."""
     df = _make_df(
-        sampling_site=[[
-            "In situ; Heart; UBERON=UBERON_0000948",
-            "In situ; Lung; UBERON=UBERON_0002048",
-        ]]
+        sampling_site=[
+            [
+                "In situ; Heart; UBERON=UBERON_0000948",
+                "In situ; Lung; UBERON=UBERON_0002048",
+            ]
+        ]
     )
     result = add_uberon(df)
     assert result.loc["CVCL_0001", "uberon_id"] == ["UBERON:0000948", "UBERON:0002048"]
@@ -225,9 +227,7 @@ def test_add_uberon_no_ontology() -> None:
 def test_add_uberon_with_note() -> None:
     """Test adding UBERON columns when a Note= field precedes the UBERON ID."""
     df = _make_df(
-        sampling_site=[[
-            "In situ; Lung; Note=From a bronchoalveolar lavage; UBERON=UBERON_0002048"
-        ]]
+        sampling_site=[["In situ; Lung; Note=From a bronchoalveolar lavage; UBERON=UBERON_0002048"]]
     )
     result = add_uberon(df)
     assert result.loc["CVCL_0001", "uberon_id"] == ["UBERON:0002048"]
