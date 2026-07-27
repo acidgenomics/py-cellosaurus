@@ -61,7 +61,7 @@ def test_process_entry_basic() -> None:
     entry = _process_entry(lines)
     assert entry["ID"] == "Test Cell"
     assert entry["AC"] == "CVCL_0001"
-    assert entry["SY"] == "TestSyn1; TestSyn2"
+    assert entry["SY"] == ["TestSyn1; TestSyn2"]  # SY stored as list (multi-value)
     assert entry["CA"] == "Cancer cell line"
     assert entry["SX"] == "Female"
     assert entry["AG"] == "30Y"
