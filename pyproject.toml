@@ -4,7 +4,7 @@ requires = ["uv_build>=0.11,<1"]
 
 [project]
 name = "cellosaurus"
-version = "0.1.0"
+version = "0.2.0"
 description = "Cellosaurus identifier mapping toolkit."
 readme = "README.md"
 license = "Apache-2.0"
@@ -41,13 +41,14 @@ develop = [
 
 [project.urls]
 Homepage = "https://github.com/acidgenomics/py-cellosaurus"
+Documentation = "https://python.acidgenomics.com/cellosaurus/"
 Repository = "https://github.com/acidgenomics/py-cellosaurus"
 Changelog = "https://github.com/acidgenomics/py-cellosaurus/blob/main/CHANGELOG.md"
 
 [tool.bumpver]
 commit = true
 commit_message = "Bump to {new_version}."
-current_version = "v0.1.0"
+current_version = "v0.2.0"
 push = false
 tag = false
 tag_message = "{new_version}"
@@ -176,7 +177,7 @@ convention = "numpy"
 allow-magic-value-types = ["bytes", "int", "str"]
 max-args = 30
 max-branches = 30
-max-positional-args = 2
+max-positional-args = 3
 max-statements = 100
 
 [tool.ty]

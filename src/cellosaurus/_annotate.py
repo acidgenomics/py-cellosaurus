@@ -136,9 +136,11 @@ def format_secondary_accession(df: pd.DataFrame) -> pd.DataFrame:
         DataFrame with ``secondary_accession`` as list of strings.
     """
 
-    def _parse(val: str | None) -> list[str]:
+    def _parse(val: str | list[str] | None) -> list[str]:
         if val is None or (isinstance(val, float) and pd.isna(val)):
             return []
+        if isinstance(val, list):
+            return [s.strip() for s in val if s]
         return [s.strip() for s in val.split("; ")]
 
     df["secondary_accession"] = df["secondary_accession"].apply(_parse)
@@ -159,9 +161,11 @@ def format_synonyms(df: pd.DataFrame) -> pd.DataFrame:
         DataFrame with ``synonyms`` as list of strings.
     """
 
-    def _parse(val: str | None) -> list[str]:
+    def _parse(val: str | list[str] | None) -> list[str]:
         if val is None or (isinstance(val, float) and pd.isna(val)):
             return []
+        if isinstance(val, list):
+            return [s.strip() for s in val if s]
         return [s.strip() for s in val.split("; ")]
 
     df["synonyms"] = df["synonyms"].apply(_parse)

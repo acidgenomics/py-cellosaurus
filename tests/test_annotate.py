@@ -78,9 +78,26 @@ def test_format_secondary_accession() -> None:
     ]
 
 
+def test_format_secondary_accession_list_input() -> None:
+    """Cellosaurus release 54.0 emits secondary_accession as a list, not a string."""
+    df = _make_df(secondary_accession=[["CVCL_A001", "CVCL_A002"]])
+    result = format_secondary_accession(df)
+    assert result.loc["CVCL_0001", "secondary_accession"] == [
+        "CVCL_A001",
+        "CVCL_A002",
+    ]
+
+
 def test_format_synonyms() -> None:
     """Test formatting of synonyms column."""
     df = _make_df(synonyms=["Syn1; Syn2; Syn3"])
+    result = format_synonyms(df)
+    assert result.loc["CVCL_0001", "synonyms"] == ["Syn1", "Syn2", "Syn3"]
+
+
+def test_format_synonyms_list_input() -> None:
+    """Cellosaurus release 54.0 emits synonyms as a list, not a string."""
+    df = _make_df(synonyms=[["Syn1", "Syn2", "Syn3"]])
     result = format_synonyms(df)
     assert result.loc["CVCL_0001", "synonyms"] == ["Syn1", "Syn2", "Syn3"]
 
