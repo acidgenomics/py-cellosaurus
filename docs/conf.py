@@ -2,8 +2,9 @@
 
 project = "cellosaurus"
 author = "Michael Steinbaugh"
-copyright = "Acid Genomics"  # noqa: A001
+copyright = "Acid Genomics"
 extensions = [
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
@@ -25,6 +26,7 @@ html_theme_options = {
     "logo": {"text": "cellosaurus"},
 }
 html_css_files = ["https://python.acidgenomics.com/css/sphinx.css"]
+html_show_sourcelink = False
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "pandas": ("https://pandas.pydata.org/docs", None),

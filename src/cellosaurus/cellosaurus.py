@@ -5,10 +5,10 @@ annotated pandas DataFrame of the Cellosaurus cell-line database.
 
 Examples
 --------
->>> cello = Cellosaurus(cache_dir="~/.cache/cellosaurus")
->>> cello.shape
-(156520, 40)
->>> mapped = cello.map_cells(["Jurkat", "HeLa"])
+>>> cello = Cellosaurus(cache_dir="~/.cache/cellosaurus")  # doctest: +SKIP
+>>> cello.shape  # doctest: +SKIP
+(168970, 40)
+>>> mapped = cello.map_cells(["Jurkat", "HeLa"])  # doctest: +SKIP
 """
 
 from __future__ import annotations
@@ -113,22 +113,46 @@ class Cellosaurus:
 
     @property
     def data_version(self) -> str | None:
-        """Return the Cellosaurus release version, if available."""
+        """Return the Cellosaurus release version, if available.
+
+        Returns
+        -------
+        str or None
+            Release version string, or ``None`` if not recorded.
+        """
         return self.df.attrs.get("data_version")
 
     @property
     def shape(self) -> tuple[int, int]:
-        """Return (n_rows, n_cols)."""
+        """Return (n_rows, n_cols).
+
+        Returns
+        -------
+        tuple of int
+            ``(n_rows, n_cols)`` of the underlying DataFrame.
+        """
         return self.df.shape
 
     @property
     def accessions(self) -> list[str]:
-        """Return all accession identifiers."""
+        """Return all accession identifiers.
+
+        Returns
+        -------
+        list of str
+            All accession identifiers (the DataFrame index).
+        """
         return list(self.df.index)
 
     @property
     def columns(self) -> list[str]:
-        """Return column names."""
+        """Return column names.
+
+        Returns
+        -------
+        list of str
+            Column names of the underlying DataFrame.
+        """
         return list(self.df.columns)
 
     # -- Subscripting ----------------------------------------------------------
@@ -141,7 +165,18 @@ class Cellosaurus:
         return result
 
     def head(self, n: int = 5) -> pd.DataFrame:
-        """Return the first *n* rows."""
+        """Return the first *n* rows.
+
+        Parameters
+        ----------
+        n : int
+            Number of rows to return.
+
+        Returns
+        -------
+        pd.DataFrame
+            The first *n* rows of the underlying DataFrame.
+        """
         return self.df.head(n)
 
     # -- Filtering (exclude) ---------------------------------------------------

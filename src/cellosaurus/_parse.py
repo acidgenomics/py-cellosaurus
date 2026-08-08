@@ -3,14 +3,12 @@
 This module handles downloading, caching, and parsing the Cellosaurus
 flat-file database from ExPASy into a structured DataFrame.
 
-See Also
---------
+Notes
+-----
 - https://www.cellosaurus.org/
 - https://ftp.expasy.org/databases/cellosaurus/
 - https://github.com/calipho-sib/cellosaurus/
 
-Notes
------
 Line codes in cellosaurus.txt:
 
 =========  ===========================  ======================

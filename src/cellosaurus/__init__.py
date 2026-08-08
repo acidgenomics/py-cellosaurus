@@ -1,7 +1,7 @@
 """Cellosaurus identifier mapping toolkit.
 
-See Also
---------
+Notes
+-----
 - https://www.cellosaurus.org/
 - https://ftp.expasy.org/databases/cellosaurus/
 - https://github.com/calipho-sib/cellosaurus/

@@ -85,6 +85,10 @@ checks = [
 ]
 # Allow docstrings to start with these words.
 override_SS05 = ['^Access ', '^Assess ', '^Process ']
+# Skip private (underscore-prefixed) functions/methods: node_name is dotted
+# module-qualified, so match the underscore after the final dot rather than
+# anchoring on ^_.
+exclude = ['\._\w']
 
 [tool.pyright]
 pythonVersion = "3.12"
@@ -94,8 +98,8 @@ venv = ".venv"
 exclude = ["tests", ".venv"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-v --tb=short"
+testpaths = ["src", "tests"]
+addopts = "-v --tb=short --doctest-modules"
 pythonpath = ["src"]
 markers = ["network: marks tests that require network access"]
 
