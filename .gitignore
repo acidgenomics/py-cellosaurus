@@ -1,0 +1,5 @@
+# The global core.excludesFile ignores docs/ and reference/; these are sources.
+!docs/
+!docs/reference/
+docs/_build/
+docs/reference/generated/
