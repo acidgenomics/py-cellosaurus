@@ -8,26 +8,18 @@ Cellosaurus identifier mapping toolkit.
 
 ### [uv][] method
 
-This is a [Python][] package hosted at [python.acidgenomics.com][].
+This is a [Python][] package hosted on [PyPI][] as `acidgenomics-cellosaurus`.
+The import name is unchanged: `cellosaurus`.
 We recommend using [uv][] to install.
 
 ```sh
-uv pip install \
-    --index-url 'https://python.acidgenomics.com/simple/' \
-    cellosaurus
+uv add acidgenomics-cellosaurus
 ```
 
-Or add the index to your project's `pyproject.toml`:
-
-```toml
-[[tool.uv.index]]
-url = "https://python.acidgenomics.com/simple/"
-```
-
-Then install:
+Or with [pip][]:
 
 ```sh
-uv add cellosaurus
+pip install acidgenomics-cellosaurus
 ```
 
 ### [Conda][] method
@@ -48,6 +40,7 @@ Apache-2.0 — Copyright 2026 Acid Genomics LLC — see [LICENSE](LICENSE).
 
 [bioconda]: https://bioconda.github.io/
 [conda]: https://docs.conda.io/
+[pip]: https://pip.pypa.io/
+[pypi]: https://pypi.org/project/acidgenomics-cellosaurus/
 [python]: https://www.python.org/
-[python.acidgenomics.com]: https://python.acidgenomics.com
 [uv]: https://docs.astral.sh/uv/
