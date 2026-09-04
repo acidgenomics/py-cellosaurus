@@ -5,3 +5,6 @@
 !docs/_themes/**/*.html
 docs/_build/
 docs/reference/generated/
+
+# Pins only this machine's dev-tool versions; not needed by consumers.
+uv.lock

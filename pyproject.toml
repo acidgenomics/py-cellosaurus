@@ -3,8 +3,8 @@ build-backend = "uv_build"
 requires = ["uv_build>=0.11,<1"]
 
 [project]
-name = "cellosaurus"
-version = "0.2.0"
+name = "acidgenomics-cellosaurus"
+version = "0.2.1"
 description = "Cellosaurus identifier mapping toolkit."
 readme = "README.md"
 license = "Apache-2.0"
@@ -48,7 +48,7 @@ Changelog = "https://github.com/acidgenomics/py-cellosaurus/blob/main/CHANGELOG.
 [tool.bumpver]
 commit = true
 commit_message = "Bump to {new_version}."
-current_version = "v0.2.0"
+current_version = "v0.2.1"
 push = false
 tag = false
 tag_message = "{new_version}"

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 (2026-09-01)
+
+### Changes
+
+- Rename the PyPI distribution to `acidgenomics-cellosaurus`. The import name is
+  unchanged: `import cellosaurus` still works.
+- Publish to PyPI instead of `python.acidgenomics.com`.
+
 ## 0.2.0 (2026-07-13)
 
 ### Changes
